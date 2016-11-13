@@ -64,7 +64,7 @@ function classPackage:preprocess ()
  local V = {}
  self.code = gsub(self.code,"\n(%s*%$[^%[%]][^\n]*)",function (v)
                                                tinsert(V,v)
-                                               return "\n#"..getn(V).."#"
+                                               return "\n#"..#V.."#"
                                               end)
 
  -- perform global substitution
@@ -152,14 +152,14 @@ function classPackage:preamble ()
 	if flags.t then
 		output("#ifndef Mtolua_typeid\n#define Mtolua_typeid(L,TI,T)\n#endif\n")
 	end
-	foreach(_usertype,function(n,v)
+	for n, v in pairs(_usertype) do
 		if (not _global_classes[v]) or _global_classes[v]:check_public_access() then
 			output(' tolua_usertype(tolua_S,"',v,'");')
 			if flags.t then
 				output(' Mtolua_typeid(tolua_S,typeid(',v,'), "',v,'");')
 			end
 		end
-	 end)
+	 end
  output('}')
  output('\n')
 end
@@ -278,7 +278,7 @@ function Package (name,fn)
 				closefile(fp)
 				return s
 			end
-			local s = read(fp,'*a')
+			local s = fp:read('*a')
 			closefile(fp)
 			if kind == 'c' or kind == 'h' then
 				return extract_code(fn,s)
@@ -334,10 +334,9 @@ function prep(file)
     end
   end
   table.insert(chunk, '\nreturn table.concat(__ret)\n')
-  local f,e = loadstring(table.concat(chunk))
+  local f,e = load(table.concat(chunk), "ld", "t", _extra_parameters)
   if e then
   	error("#"..e)
   end
-  setfenv(f, _extra_parameters)
   return f()
 end

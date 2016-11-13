@@ -46,9 +46,6 @@ function dostring(s) return do_(loadstring(s)) end
 -------------------------------------------------------------------
 -- Table library
 local tab = table
-foreach = tab.foreach
-foreachi = tab.foreachi
-getn = tab.getn
 tinsert = tab.insert
 tremove = tab.remove
 sort = tab.sort
@@ -176,18 +173,20 @@ function appendto (name)
 end
 
 function read (...)
+  local arg={...}
   local f = _INPUT
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)
   end
-  return f:read(unpack(arg))
+  return f:read(table.unpack(arg))
 end
 
 function write (...)
+  local arg={...}
   local f = _OUTPUT
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)
   end
-  return f:write(unpack(arg))
+  return f:write(table.unpack(arg))
 end
 
