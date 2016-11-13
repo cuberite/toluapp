@@ -176,6 +176,7 @@ function appendto (name)
 end
 
 function read (...)
+  local arg = { ... }
   local f = _INPUT
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)
@@ -184,6 +185,7 @@ function read (...)
 end
 
 function write (...)
+  local arg = { ... }
   local f = _OUTPUT
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)

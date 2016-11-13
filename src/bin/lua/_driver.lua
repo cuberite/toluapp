@@ -1,8 +1,4 @@
 
--- Allow debugging by ZBS, if run under the IDE:
-local mobdebugfound, mobdebug = pcall(require, "mobdebug")
-if mobdebugfound then mobdebug.start() end
-
 -- Disable buffering for stdout, so that the results appear immediately:
 io.output():setvbuf("no")
 
@@ -48,15 +44,19 @@ TOLUA_LUA_VERSION = "Lua 5.1"
 
 
 -- Process the cmdline params into the flags table:
-local args = arg or {}
+local args = {...}
 local argc = #args
 local i = 1
+path = arg[0] or ""
 while (i <= argc) do
 	local argv = args[i]
 	if (argv:sub(1, 1) == "-") then
 		if (KnownArgs[argv:sub(2)]) then
 			print("Setting flag \"" .. argv:sub(2) .. "\" to \"" .. args[i + 1] .. "\".")
 			flags[argv:sub(2)] = args[i + 1]
+			i = i + 1
+		elseif (argv:sub(2) == "0") then
+			path = args[i + 1]
 			i = i + 1
 		else
 			print("Unknown option (" .. i .. "): " .. argv)
@@ -72,12 +72,11 @@ while (i <= argc) do
 end
 
 -- Get the path where the scripts are located:
-path = args[0] or ""
 local index = path:find("/[^/]*$")
-if (index == nil) then
+if not(index) then
 	index = path:find("\\[^\\]*$")
 end
-if (index ~= nil) then
+if (index) then
 	path = path:sub(1, index)
 end
 
@@ -88,7 +87,8 @@ print("path is set to \"" .. path .. "\".")
 
 
 -- Call the ToLua processor:
-dofile(path .. "all.lua")
+local tolua = loadfile(path .. "all.lua")
+tolua()
 
 
 
