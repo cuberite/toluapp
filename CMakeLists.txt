@@ -44,17 +44,20 @@ file(GLOB BIN_SOURCE
     "src/bin/*.c"
 )
 
+if (ANDROID_CROSSCOMPILE)
+	link_directories(${ANDROID_LUA_DIR})
+endif()
+
 add_executable(tolua ${BIN_SOURCE})
 add_library(tolualib ${LIB_SOURCE})
 target_link_libraries(tolualib lua)
-
-#m is the standard math librarys
-if(UNIX)
-target_link_libraries(tolua m ${DYNAMIC_LOADER})
-endif()
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
 	add_flags_lnk(-L/usr/local/lib)
 endif()
 
-target_link_libraries(tolua tolualib lua)
+if(UNIX)
+	target_link_libraries(tolua tolualib lua m ${CMAKE_DL_LIBS})
+else()
+	target_link_libraries(tolua tolualib lua)
+endif()
