@@ -322,7 +322,7 @@ function prep(file)
       table.insert(chunk, string.sub(line, 3) .. "\n")
      else
       local last = 1
-      for text, expr, index in string.gfind(line, "(.-)$(%b())()") do 
+      for text, expr, index in string.gfind(line, "(.-)$(%b())()") do
         last = index
         if text ~= "" then
           table.insert(chunk, string.format('table.insert(__ret, %q )', text))
@@ -334,7 +334,7 @@ function prep(file)
     end
   end
   table.insert(chunk, '\nreturn table.concat(__ret)\n')
-  local f,e = load(table.concat(chunk), "ld", "t", _extra_parameters)
+  local f,e = loadstringwithenv(table.concat(chunk), _extra_parameters)
   if e then
   	error("#"..e)
   end

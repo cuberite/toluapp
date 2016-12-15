@@ -49,6 +49,7 @@ local tab = table
 tinsert = tab.insert
 tremove = tab.remove
 sort = tab.sort
+local unpack = table.unpack or unpack
 
 -------------------------------------------------------------------
 -- Debug library
@@ -80,7 +81,7 @@ max = math.max
 min = math.min
 mod = math.mod
 PI = math.pi
---??? pow = math.pow  
+--??? pow = math.pow
 rad = math.rad
 random = math.random
 randomseed = math.randomseed
@@ -178,7 +179,7 @@ function read (...)
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)
   end
-  return f:read(table.unpack(arg))
+  return f:read(unpack(arg))
 end
 
 function write (...)
@@ -187,6 +188,20 @@ function write (...)
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)
   end
-  return f:write(table.unpack(arg))
+  return f:write(unpack(arg))
 end
 
+function loadstringwithenv(a_String, a_Env)
+	if (_VERSION == "Lua 5.1") then
+		local res, err = loadstring(a_String, "loadstringwithenv")
+		if not(res) then
+			return nil, err
+		end
+		if (a_Env) then
+			setfenv(res, a_Env)
+		end
+		return res
+	else
+		return load(a_String, "loadstringwithenv", "t", a_Env)
+	end
+end
