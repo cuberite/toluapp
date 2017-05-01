@@ -412,6 +412,11 @@ end
 
 -- Return parameter value
 function classDeclaration:retvalue ()
+ -- Bail out, if is_parameter is true and it's a const &
+ if self.is_parameter and string.match(self.type, "const") and self.ret == "&" then
+	return 0
+ end
+
  if self.ret ~= '' then
   local t,ct = isbasic(self.type)
   if t and t~='' then
