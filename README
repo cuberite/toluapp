@@ -1,4 +1,4 @@
-This is tolua++-1.0
+This is tolua++-1.0, with changes made by the Cuberite community (*)
 
 * What is tolua++?
   tolua++ is an extension of toLua, a tool to integrate C/C++ code with
@@ -28,3 +28,9 @@ This is tolua++-1.0
   tolua++ is maintained by Ariel Manzur.
   Send your comments, bug reports and anything else to 
   tolua@codenix.com
+
+
+
+(*) Changes were made to make it easier to incorporate this tool into a cross-
+-compiling flow. The binary stub was removed in favor of a pure-Lua
+implementation by the caller.
