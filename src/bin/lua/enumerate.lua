@@ -60,9 +60,13 @@ function classEnumerate:supcode ()
 		_global_output_enums[self.name] = 1
 		output("int tolua_is" .. string.gsub(self.name,"::","_") .. " (lua_State* L, int lo, int def, tolua_Error* err)")
 		output("{")
-		output("if (!tolua_isnumber(L,lo,def,err)) return 0;")
-		output("lua_Number val = tolua_tonumber(L,lo,def);")
-		output("return val >= " .. self.min .. ".0 && val <= " ..self.max .. ".0;")
+		output("\tif (!tolua_isnumber(L,lo,def,err)) return 0;")
+		output("\tlua_Number val = tolua_tonumber(L,lo,def);")
+		output("\tif (val >= " .. self.min .. ".0 && val <= " ..self.max .. ".0) return 1;")
+		output("\terr->index = lo;")
+		output("\terr->array = 0;")
+		output("\terr->type = \"" .. self.name .. "\";")
+		output("\treturn 0;")
 		output("}")
 	end
 end
