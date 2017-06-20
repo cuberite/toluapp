@@ -549,14 +549,32 @@ function classContainer:doparse (s)
   end
  end
 
- -- try enumerates
-
+ -- try typedef enumerates
  do
-  local b,e,name,body,varname = strfind(s,"^%s*enum%s+(%S*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+  local b,e,body,name = strfind(s,"^%s*typedef%s+enum[^{]*(%b{})%s*([%w_][^%s]*)%s*;%s*")
   if b then
-   --error("#Sorry, declaration of enums and variables on the same statement is not supported.\nDeclare your variable separately (example: '"..name.." "..varname..";')")
+   _curr_code = strsub(s,b,e)
+   Enumerate(name,body)
+   return strsub(s,e+1)
+  end
+ end
+ 
+ -- try enumerates
+ do
+  local b,e,name,body,varname = strfind(s,"^%s*enum%s+([^%s:{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+  if b then
    _curr_code = strsub(s,b,e)
    Enumerate(name,body,varname)
+   return strsub(s,e+1)
+  end
+ end
+
+ -- try typed enum 
+ do
+  local b,e,name,typed,body,varname = strfind(s,"^%s*enum%s+([^%s:{]*)%s*:%s*([%a_][^{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+  if b then
+   _curr_code = strsub(s,b,e)
+   Enumerate(name,body,varname,typed)
    return strsub(s,e+1)
   end
  end
@@ -570,15 +588,26 @@ function classContainer:doparse (s)
 --  end
 -- end 
 
+ -- try scoped enum
  do
-  local b,e,body,name = strfind(s,"^%s*typedef%s+enum[^{]*(%b{})%s*([%w_][^%s]*)%s*;%s*")
+  local b,e,name,body,varname = strfind(s,"^%s*enum%s+class%s*([^%s:{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
   if b then
    _curr_code = strsub(s,b,e)
-   Enumerate(name,body)
+   ScopedEnum(name,body,varname)
    return strsub(s,e+1)
   end
  end
 
+  -- try typed scoped enum
+ do
+  local b,e,name,typed,body,varname = strfind(s,"^%s*enum%s+class%s*([^%s:{]*)%s*:%s*([%a_][^{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+  if b then
+   _curr_code = strsub(s,b,e)
+   ScopedEnum(name,body,varname,typed)
+   return strsub(s,e+1)
+  end
+ end 
+ 
  -- try operator
  do
   local b,e,decl,kind,arg,const = strfind(s,"^%s*([_%w][_%w%s%*&:<>,]-%s+operator)%s*([^%s][^%s]*)%s*(%b())%s*(c?o?n?s?t?)%s*;%s*")
