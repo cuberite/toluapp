@@ -1,8 +1,5 @@
--- tolua: enumeration class
--- Written by Waldemar Celes
--- TeCGraf/PUC-Rio
--- Jul 1998
--- $Id: enumerate.lua,v 1.3 2000/01/24 20:41:15 celes Exp $
+-- Based on the enumeration class by Waldemar Celes found in enumerate.lua
+-- Following is the original notice from that file.
 
 -- This code is free software; you can redistribute it and/or modify it.
 -- The software provided hereunder is on an "as is" basis, and
