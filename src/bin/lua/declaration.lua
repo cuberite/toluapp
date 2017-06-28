@@ -285,7 +285,9 @@ function classDeclaration:builddeclaration (narg, cplusplus)
 	end
 	line = concatparam(line,') ')
 	if isenum(nctype) then
-		line = concatparam(line,'(int) ')
+		local new_mod,new_type = applytypedef('', nctype)
+		local full_type = new_mod..' '..new_type
+		line = concatparam(line,'('..full_type..') ')
 	end
 	local def = 0
 	if self.def ~= '' then

@@ -1,8 +1,5 @@
--- tolua: enumerate class
--- Written by Waldemar Celes
--- TeCGraf/PUC-Rio
--- Jul 1998
--- $Id: enumerate.lua,v 1.3 2000/01/24 20:41:15 celes Exp $
+-- Based on the enumeration class by Waldemar Celes found in enumerate.lua
+-- Following is the original notice from that file.
 
 -- This code is free software; you can redistribute it and/or modify it.
 -- The software provided hereunder is on an "as is" basis, and
@@ -10,35 +7,37 @@
 -- enhancements, or modifications.
 
 
--- Enumerate class
+-- ScopedEnum class
 -- Represents enumeration
 -- The following fields are stored:
 --    {i} = list of constant names
-classEnumerate = {
+classScopedEnum = {
 }
-classEnumerate.__index = classEnumerate
-setmetatable(classEnumerate,classFeature)
+classScopedEnum.__index = classScopedEnum
+setmetatable(classScopedEnum,classFeature)
 
--- register enumeration
-function classEnumerate:register (pre)
+-- register scopedenum
+function classScopedEnum:register (pre)
 	if not self:check_public_access() then
 		return
 	end
  pre = pre or ''
  local nspace = getnamespace(classContainer.curr)
  local i=1
+ output(pre..'tolua_module(tolua_S,"'..self.name..'",0);')
+ output(pre..'tolua_beginmodule(tolua_S,"'..self.name..'");')
  while self[i] do
  	if self.lnames[i] and self.lnames[i] ~= "" then
-	
-		output(pre..'tolua_constant(tolua_S,"'..self.lnames[i]..'",'..nspace..self[i]..');')
+		output(pre..' tolua_constant(tolua_S,"'..self.lnames[i]..'",static_cast<lua_Number>('..nspace..self.name.."::"..self[i]..'));')
 	end
   i = i+1
  end
+ output(pre..'tolua_endmodule(tolua_S);')
 end
 
 -- Print method
-function classEnumerate:print (ident,close)
- print(ident.."Enumerate{")
+function classScopedEnum:print (ident,close)
+ print(ident.."ScopedEnum{")
  print(ident.." name = "..self.name)
  local i=1
  while self[i] do
@@ -55,7 +54,7 @@ end
 _global_output_enums = {}
 
 -- write support code
-function classEnumerate:supcode ()
+function classScopedEnum:supcode ()
 	if _global_output_enums[self.name] == nil then
 		_global_output_enums[self.name] = 1
 		output("int tolua_is" .. string.gsub(self.name,"::","_") .. " (lua_State* L, int lo, int def, tolua_Error* err)")
@@ -72,19 +71,10 @@ function classEnumerate:supcode ()
 end
 
 -- Internal constructor
-function _Enumerate (t,varname)
- setmetatable(t,classEnumerate)
+function _ScopedEnum (t,varname)
+ setmetatable(t,classScopedEnum)
  append(t)
  appendenum(t)
-	 if varname and varname ~= "" then
-		if t.name ~= "" then
-			Variable(t.name.." "..varname)
-		else
-			local ns = getcurrnamespace()
-			warning("Variable "..ns..varname.." of type <anonymous enum> is declared as read-only")
-			Variable("tolua_readonly int "..varname)
-		end
-	end
 	 local parent = classContainer.curr
 	 if parent then
 		t.access = parent.curr_member_access
@@ -95,7 +85,7 @@ end
 
 -- Constructor
 -- Expects a string representing the enumerate body
-function Enumerate (n,b,varname,typed)
+function ScopedEnum (n,b,varname,typed)
 	b = string.gsub(b, ",[%s\n]*}", "\n}") -- eliminate last ','
 	local t = split(strsub(b,2,-2),',') -- eliminate braces
 	local i = 1
@@ -131,7 +121,8 @@ function Enumerate (n,b,varname,typed)
 			t[2] = applyrenaming(t[1])
 		end
 		e.lnames[i] = t[2] or t[1]
-		_global_enums[ ns..e[i] ] = (ns..e[i])
+		local fullname = ns.."::"..n.."::"..e[i]
+		_global_enums[ fullname ] = (fullname)
 		i = i+1
 	end
 	e.name = n
@@ -140,11 +131,11 @@ function Enumerate (n,b,varname,typed)
 	if n ~= "" then
 		_enums[n] = true
 		if typed and typed ~= "" then
-			Typedef(typed .." "..n)
+			Typedef(typed.." "..n)
 		else
 			Typedef("int "..n)
 		end
 	end
-	return _Enumerate(e, varname)
+	return _ScopedEnum(e, varname)
 end
 
