@@ -14,7 +14,7 @@
 function parse_extra()
 
 	for k,v in ipairs(_extra_parameters or {}) do
-		
+
 		local b,e,name,value = string.find(v, "^([^=]*)=(.*)$")
 		if b then
 			_extra_parameters[name] = value

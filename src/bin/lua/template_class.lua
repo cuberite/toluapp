@@ -58,18 +58,18 @@ end
 function TemplateClass(name, parents, body, parameters)
 
 	local o = {
-	
+
 		parents = parents,
 		body = body,
 		args = parameters,
 	}
-	
+
 	local oname = string.gsub(name, "@.*$", "")
 	oname = getnamespace(classContainer.curr)..oname
 	o.name = oname
 
 	o.local_name = name
-	
+
 	setmetatable(o, classTemplateClass)
 
 	if _global_templates[oname] then

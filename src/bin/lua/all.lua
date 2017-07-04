@@ -25,7 +25,7 @@ dofile(path.."doit.lua")
 
 local err,msg = xpcall(doit, debug.traceback)
 if not err then
---print("**** msg is "..tostring(msg))
- local _,_,label,msg = strfind(msg,"(.-:.-:%s*)(.*)")
- tolua_error(msg,label)
+	-- print("**** msg is "..tostring(msg))
+	local _,_,label,msg = strfind(msg,"(.-:.-:%s*)(.*)")
+	tolua_error(msg,label)
 end

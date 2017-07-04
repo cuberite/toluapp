@@ -18,20 +18,20 @@ global_enums = {}
 -- to lua.
 classContainer =
 {
- curr = nil,
+	curr = nil,
 }
 classContainer.__index = classContainer
 setmetatable(classContainer,classFeature)
 
 -- output tags
 function classContainer:decltype ()
- push(self)
- local i=1
- while self[i] do
-  self[i]:decltype()
-  i = i+1
- end
- pop()
+	push(self)
+	local i=1
+	while self[i] do
+		self[i]:decltype()
+		i = i+1
+	end
+	pop()
 end
 
 
@@ -42,43 +42,43 @@ function classContainer:supcode ()
 		return
 	end
 
- push(self)
- local i=1
- while self[i] do
-  if self[i]:check_public_access() then
-  	self[i]:supcode()
-  end
-  i = i+1
- end
- pop()
+	push(self)
+	local i=1
+	while self[i] do
+		if self[i]:check_public_access() then
+			self[i]:supcode()
+		end
+		i = i+1
+	end
+	pop()
 end
 
 function classContainer:hasvar ()
- local i=1
- while self[i] do
-  if self[i]:isvariable() then
-		 return 1
+	local i=1
+	while self[i] do
+		if self[i]:isvariable() then
+			return 1
+		end
+		i = i+1
 	end
-  i = i+1
- end
 	return 0
 end
 
 -- Internal container constructor
 function _Container (self)
- setmetatable(self,classContainer)
- self.n = 0
- self.typedefs = {tolua_n=0}
- self.usertypes = {}
- self.enums = {tolua_n=0}
- self.lnames = {}
- return self
+	setmetatable(self,classContainer)
+	self.n = 0
+	self.typedefs = {tolua_n=0}
+	self.usertypes = {}
+	self.enums = {tolua_n=0}
+	self.lnames = {}
+	return self
 end
 
 -- push container
 function push (t)
 	t.prox = classContainer.curr
- classContainer.curr = t
+	classContainer.curr = t
 end
 
 -- pop container
@@ -86,7 +86,7 @@ function pop ()
 --print("name",classContainer.curr.name)
 --foreach(classContainer.curr.usertypes,print)
 --print("______________")
- classContainer.curr = classContainer.curr.prox
+	classContainer.curr = classContainer.curr.prox
 end
 
 -- get current namespace
@@ -96,65 +96,65 @@ end
 
 -- append to current container
 function append (t)
- return classContainer.curr:append(t)
+	return classContainer.curr:append(t)
 end
 
 -- append typedef to current container
 function appendtypedef (t)
- return classContainer.curr:appendtypedef(t)
+	return classContainer.curr:appendtypedef(t)
 end
 
 -- append usertype to current container
 function appendusertype (t)
- return classContainer.curr:appendusertype(t)
+	return classContainer.curr:appendusertype(t)
 end
 
 -- append enum to current container
 function appendenum (t)
- return classContainer.curr:appendenum(t)
+	return classContainer.curr:appendenum(t)
 end
 
 -- substitute typedef
 function applytypedef (mod,type)
- return classContainer.curr:applytypedef(mod,type)
+	return classContainer.curr:applytypedef(mod,type)
 end
 
 -- check if is type
 function findtype (type)
- local t = classContainer.curr:findtype(type)
+	local t = classContainer.curr:findtype(type)
 	return t
 end
 
 -- check if is typedef
 function istypedef (type)
- return classContainer.curr:istypedef(type)
+	return classContainer.curr:istypedef(type)
 end
 
 -- get fulltype (with namespace)
 function fulltype (t)
- local curr =  classContainer.curr
+	local curr =  classContainer.curr
 	while curr do
-	 if curr then
-		 if curr.typedefs and curr.typedefs[t] then
-		  return curr.typedefs[t]
-		 elseif curr.usertypes and curr.usertypes[t] then
-		  return curr.usertypes[t]
+		if curr then
+			if curr.typedefs and curr.typedefs[t] then
+				return curr.typedefs[t]
+			elseif curr.usertypes and curr.usertypes[t] then
+				return curr.usertypes[t]
 			end
 		end
-	 curr = curr.prox
+		curr = curr.prox
 	end
 	return t
 end
 
 -- checks if it requires collection
 function classContainer:requirecollection (t)
- push(self)
- local i=1
+	push(self)
+	local i=1
 	local r = false
- while self[i] do
-  r = self[i]:requirecollection(t) or r
-  i = i+1
- end
+	while self[i] do
+		r = self[i]:requirecollection(t) or r
+		i = i+1
+	end
 	pop()
 	return r
 end
@@ -164,49 +164,49 @@ end
 function getnamespace (curr)
 	local namespace = ''
 	while curr do
-	 if curr and
-		   ( curr.classtype == 'class' or curr.classtype == 'namespace')
+		if curr and
+		( curr.classtype == 'class' or curr.classtype == 'namespace')
 		then
-		 namespace = (curr.original_name or curr.name) .. '::' .. namespace
-		 --namespace = curr.name .. '::' .. namespace
+			namespace = (curr.original_name or curr.name) .. '::' .. namespace
+			--namespace = curr.name .. '::' .. namespace
 		end
-	 curr = curr.prox
+		curr = curr.prox
 	end
 	return namespace
 end
 
 -- get namespace (only namespace)
 function getonlynamespace ()
- local curr = classContainer.curr
+	local curr = classContainer.curr
 	local namespace = ''
 	while curr do
 		if curr.classtype == 'class' then
-		 return namespace
+			return namespace
 		elseif curr.classtype == 'namespace' then
-		 namespace = curr.name .. '::' .. namespace
+			namespace = curr.name .. '::' .. namespace
 		end
-	 curr = curr.prox
+		curr = curr.prox
 	end
 	return namespace
 end
 
 -- check if is enum
 function isenum (type)
- return classContainer.curr:isenum(type)
+	return classContainer.curr:isenum(type)
 end
 
 -- append feature to container
 function classContainer:append (t)
- self.n = self.n + 1
- self[self.n] = t
- t.parent = self
+	self.n = self.n + 1
+	self[self.n] = t
+	t.parent = self
 end
 
 -- append typedef
 function classContainer:appendtypedef (t)
- local namespace = getnamespace(classContainer.curr)
- self.typedefs.tolua_n = self.typedefs.tolua_n + 1
- self.typedefs[self.typedefs.tolua_n] = t
+	local namespace = getnamespace(classContainer.curr)
+	self.typedefs.tolua_n = self.typedefs.tolua_n + 1
+	self.typedefs[self.typedefs.tolua_n] = t
 	self.typedefs[t.utype] = namespace .. t.utype
 	global_typedefs[namespace..t.utype] = t
 	t.ftype = findtype(t.type) or t.type
@@ -234,20 +234,20 @@ end
 
 -- append enum
 function classContainer:appendenum (t)
- local namespace = getnamespace(classContainer.curr)
- self.enums.tolua_n = self.enums.tolua_n + 1
- self.enums[self.enums.tolua_n] = t
+	local namespace = getnamespace(classContainer.curr)
+	self.enums.tolua_n = self.enums.tolua_n + 1
+	self.enums[self.enums.tolua_n] = t
 	global_enums[namespace..t.name] = t
 end
 
 -- determine lua function name overload
 function classContainer:overload (lname)
- if not self.lnames[lname] then
-  self.lnames[lname] = 0
- else
-  self.lnames[lname] = self.lnames[lname] + 1
- end
- return format("%02d",self.lnames[lname])
+	if not self.lnames[lname] then
+		self.lnames[lname] = 0
+	else
+		self.lnames[lname] = self.lnames[lname] + 1
+	end
+	return format("%02d",self.lnames[lname])
 end
 
 -- applies typedef: returns the 'the facto' modifier and type
@@ -264,20 +264,20 @@ end
 
 -- check if it is a typedef
 function classContainer:istypedef (type)
- local env = self
- while env do
-  if env.typedefs then
-   local i=1
-   while env.typedefs[i] do
-    if env.typedefs[i].utype == type then
-         return type
-        end
-        i = i+1
-   end
-  end
-  env = env.parent
- end
- return nil
+	local env = self
+	while env do
+		if env.typedefs then
+			local i=1
+			while env.typedefs[i] do
+				if env.typedefs[i].utype == type then
+					return type
+				end
+				i = i+1
+			end
+		end
+		env = env.parent
+	end
+	return nil
 end
 
 function find_enum_var(var)
@@ -307,7 +307,7 @@ function classContainer:findtype (t)
 
 	t = string.gsub(t, "=.*", "")
 	if _basic[t] then
-	 return t
+		return t
 	end
 
 	local _,_,em = string.find(t, "([&%*])%s*$")
@@ -358,7 +358,7 @@ function match_type(childtype, regtype, st)
 	if b then
 
 		if e == string.len(regtype) and
-				(b == 1 or (string.sub(regtype, b-1, b-1) == ':' and
+		(b == 1 or (string.sub(regtype, b-1, b-1) == ':' and
 				string.sub(regtype, 1, b-1) == string.sub(st, 1, b-1))) then
 			return true
 		end
@@ -374,9 +374,9 @@ function findtype_on_childs(self, t)
 		for k,v in ipairs(self) do
 			if v.classtype == 'class' or v.classtype == 'namespace' then
 				if v.typedefs and v.typedefs[t] then
-				 return v.typedefs[t]
+					return v.typedefs[t]
 				elseif v.usertypes and v.usertypes[t] then
-				 return v.usertypes[t]
+					return v.usertypes[t]
 				end
 				tchild = findtype_on_childs(v, t)
 				if tchild then return tchild end
@@ -388,27 +388,27 @@ function findtype_on_childs(self, t)
 end
 
 function classContainer:isenum (type)
- if global_enums[type] then
-	return type
- else
- 	return false
- end
+	if global_enums[type] then
+		return type
+	else
+		return false
+	end
 
- local basetype = gsub(type,"^.*::","")
- local env = self
- while env do
-  if env.enums then
-   local i=1
-   while env.enums[i] do
-    if env.enums[i].name == basetype then
-         return true
-        end
-        i = i+1
-   end
-  end
-  env = env.parent
- end
- return false
+	local basetype = gsub(type,"^.*::","")
+	local env = self
+	while env do
+		if env.enums then
+			local i=1
+			while env.enums[i] do
+				if env.enums[i].name == basetype then
+					return true
+				end
+				i = i+1
+			end
+		end
+		env = env.parent
+	end
+	return false
 end
 
 methodisvirtual = false -- a global
@@ -417,167 +417,167 @@ methodisvirtual = false -- a global
 function classContainer:doparse (s)
 --print ("parse "..s)
 
- -- try the parser hook
- do
- 	local sub = parser_hook(s)
- 	if sub then
- 		return sub
- 	end
- end
+	-- try the parser hook
+	do
+		local sub = parser_hook(s)
+		if sub then
+			return sub
+		end
+	end
 
- -- try the null statement
- do
- 	local b,e,code = string.find(s, "^%s*;")
- 	if b then
- 		return strsub(s,e+1)
- 	end
- end
+	-- try the null statement
+	do
+		local b,e,code = string.find(s, "^%s*;")
+		if b then
+			return strsub(s,e+1)
+		end
+	end
 
- -- try empty verbatim line
- do
- 	local b,e,code = string.find(s, "^%s*$\n")
- 	if b then
- 		return strsub(s,e+1)
- 	end
- end
+	-- try empty verbatim line
+	do
+		local b,e,code = string.find(s, "^%s*$\n")
+		if b then
+			return strsub(s,e+1)
+		end
+	end
 
- -- try Lua code
- do
-  local b,e,code = strfind(s,"^%s*(%b\1\2)")
-  if b then
-   Code(strsub(code,2,-2))
-   return strsub(s,e+1)
-  end
- end
+	-- try Lua code
+	do
+		local b,e,code = strfind(s,"^%s*(%b\1\2)")
+		if b then
+			Code(strsub(code,2,-2))
+			return strsub(s,e+1)
+		end
+	end
 
- -- try C code
- do
-  local b,e,code = strfind(s,"^%s*(%b\3\4)")
-  if b then
-	code = '{'..strsub(code,2,-2)..'\n}\n'
-	Verbatim(code,'r')        -- verbatim code for 'r'egister fragment
-	return strsub(s,e+1)
-  end
- end
+	-- try C code
+	do
+		local b,e,code = strfind(s,"^%s*(%b\3\4)")
+		if b then
+			code = '{'..strsub(code,2,-2)..'\n}\n'
+			Verbatim(code,'r')        -- verbatim code for 'r'egister fragment
+			return strsub(s,e+1)
+		end
+	end
 
- -- try C code for preamble section
- do
- 	local b,e,code = string.find(s, "^%s*(%b\5\6)")
- 	if b then
- 		code = string.sub(code, 2, -2).."\n"
-		Verbatim(code, '')
-		return string.sub(s, e+1)
- 	end
- end
+	-- try C code for preamble section
+	do
+		local b,e,code = string.find(s, "^%s*(%b\5\6)")
+		if b then
+			code = string.sub(code, 2, -2).."\n"
+			Verbatim(code, '')
+			return string.sub(s, e+1)
+		end
+	end
 
- -- try default_property directive
- do
- 	local b,e,ptype = strfind(s, "^%s*TOLUA_PROPERTY_TYPE%s*%(+%s*([^%)%s]*)%s*%)+%s*;?")
- 	if b then
- 		if not ptype or ptype == "" then
- 			ptype = "default"
- 		end
- 		self:set_property_type(ptype)
-	 	return strsub(s, e+1)
- 	end
- end
+	-- try default_property directive
+	do
+		local b,e,ptype = strfind(s, "^%s*TOLUA_PROPERTY_TYPE%s*%(+%s*([^%)%s]*)%s*%)+%s*;?")
+		if b then
+			if not ptype or ptype == "" then
+				ptype = "default"
+			end
+			self:set_property_type(ptype)
+			return strsub(s, e+1)
+		end
+	end
 
- -- try protected_destructor directive
- do
- 	local b,e = string.find(s, "^%s*TOLUA_PROTECTED_DESTRUCTOR%s*;?")
-	if b then
-		if self.set_protected_destructor then
-	 		self:set_protected_destructor(true)
-	 	end
- 		return strsub(s, e+1)
- 	end
- end
+	-- try protected_destructor directive
+	do
+		local b,e = string.find(s, "^%s*TOLUA_PROTECTED_DESTRUCTOR%s*;?")
+		if b then
+			if self.set_protected_destructor then
+				self:set_protected_destructor(true)
+			end
+			return strsub(s, e+1)
+		end
+	end
 
- -- try 'extern' keyword
- do
- 	local b,e = string.find(s, "^%s*extern%s+")
- 	if b then
-		-- do nothing
- 		return strsub(s, e+1)
- 	end
- end
+	-- try 'extern' keyword
+	do
+		local b,e = string.find(s, "^%s*extern%s+")
+		if b then
+			-- do nothing
+			return strsub(s, e+1)
+		end
+	end
 
- -- try 'virtual' keyworkd
- do
- 	local b,e = string.find(s, "^%s*virtual%s+")
- 	if b then
- 		methodisvirtual = true
- 		return strsub(s, e+1)
- 	end
- end
+	-- try 'virtual' keyworkd
+	do
+		local b,e = string.find(s, "^%s*virtual%s+")
+		if b then
+			methodisvirtual = true
+			return strsub(s, e+1)
+		end
+	end
 
- -- try labels (public, private, etc)
- do
- 	local b,e = string.find(s, "^%s*%w*%s*:[^:]")
- 	if b then
- 		return strsub(s, e) -- preserve the [^:]
- 	end
- end
+	-- try labels (public, private, etc)
+	do
+		local b,e = string.find(s, "^%s*%w*%s*:[^:]")
+		if b then
+			return strsub(s, e) -- preserve the [^:]
+		end
+	end
 
- -- try module
- do
-  local b,e,name,body = strfind(s,"^%s*module%s%s*([_%w][_%w]*)%s*(%b{})%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Module(name,body)
-   return strsub(s,e+1)
-  end
- end
+	-- try module
+	do
+		local b,e,name,body = strfind(s,"^%s*module%s%s*([_%w][_%w]*)%s*(%b{})%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Module(name,body)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try namesapce
- do
-  local b,e,name,body = strfind(s,"^%s*namespace%s%s*([_%w][_%w]*)%s*(%b{})%s*;?")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Namespace(name,body)
-   return strsub(s,e+1)
-  end
- end
+	-- try namesapce
+	do
+		local b,e,name,body = strfind(s,"^%s*namespace%s%s*([_%w][_%w]*)%s*(%b{})%s*;?")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Namespace(name,body)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try define
- do
-  local b,e,name = strfind(s,"^%s*#define%s%s*([^%s]*)[^\n]*\n%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Define(name)
-   return strsub(s,e+1)
-  end
- end
+	-- try define
+	do
+		local b,e,name = strfind(s,"^%s*#define%s%s*([^%s]*)[^\n]*\n%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Define(name)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try typedef enumerates
- do
-  local b,e,body,name = strfind(s,"^%s*typedef%s+enum[^{]*(%b{})%s*([%w_][^%s]*)%s*;%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Enumerate(name,body)
-   return strsub(s,e+1)
-  end
- end
- 
- -- try enumerates
- do
-  local b,e,name,body,varname = strfind(s,"^%s*enum%s+([^%s:{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Enumerate(name,body,varname)
-   return strsub(s,e+1)
-  end
- end
+	-- try typedef enumerates
+	do
+		local b,e,body,name = strfind(s,"^%s*typedef%s+enum[^{]*(%b{})%s*([%w_][^%s]*)%s*;%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Enumerate(name,body)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try typed enum 
- do
-  local b,e,name,typed,body,varname = strfind(s,"^%s*enum%s+([^%s:{]*)%s*:%s*([%a_][^{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Enumerate(name,body,varname,typed)
-   return strsub(s,e+1)
-  end
- end
+	-- try enumerates
+	do
+		local b,e,name,body,varname = strfind(s,"^%s*enum%s+([^%s:{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Enumerate(name,body,varname)
+			return strsub(s,e+1)
+		end
+	end
+
+	-- try typed enum
+	do
+		local b,e,name,typed,body,varname = strfind(s,"^%s*enum%s+([^%s:{]*)%s*:%s*([%a_][^{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Enumerate(name,body,varname,typed)
+			return strsub(s,e+1)
+		end
+	end
 
 -- do
 --  local b,e,name,body = strfind(s,"^%s*enum%s+(%S*)%s*(%b{})%s*;?%s*")
@@ -586,107 +586,107 @@ function classContainer:doparse (s)
 --   Enumerate(name,body)
 --  return strsub(s,e+1)
 --  end
--- end 
+-- end
 
- -- try scoped enum
- do
-  local b,e,name,body,varname = strfind(s,"^%s*enum%s+class%s*([^%s:{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   ScopedEnum(name,body,varname)
-   return strsub(s,e+1)
-  end
- end
+	-- try scoped enum
+	do
+		local b,e,name,body,varname = strfind(s,"^%s*enum%s+class%s*([^%s:{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			ScopedEnum(name,body,varname)
+			return strsub(s,e+1)
+		end
+	end
 
-  -- try typed scoped enum
- do
-  local b,e,name,typed,body,varname = strfind(s,"^%s*enum%s+class%s*([^%s:{]*)%s*:%s*([%a_][^{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   ScopedEnum(name,body,varname,typed)
-   return strsub(s,e+1)
-  end
- end 
- 
- -- try operator
- do
-  local b,e,decl,kind,arg,const = strfind(s,"^%s*([_%w][_%w%s%*&:<>,]-%s+operator)%s*([^%s][^%s]*)%s*(%b())%s*(c?o?n?s?t?)%s*;%s*")
-  if not b then
-		 -- try inline
-   b,e,decl,kind,arg,const = strfind(s,"^%s*([_%w][_%w%s%*&:<>,]-%s+operator)%s*([^%s][^%s]*)%s*(%b())%s*(c?o?n?s?t?)[%s\n]*%b{}%s*;?%s*")
-  end
-  if not b then
-  	-- try cast operator
-  	b,e,decl,kind,arg,const = strfind(s, "^%s*(operator)%s+([%w_:%d<>%*%&%s]+)%s*(%b())%s*(c?o?n?s?t?)");
-  	if b then
-  		local _,ie = string.find(s, "^%s*%b{}", e+1)
-  		if ie then
-  			e = ie
-  		end
-  	end
-  end
-  if b then
-   _curr_code = strsub(s,b,e)
-   Operator(decl,kind,arg,const)
-   return strsub(s,e+1)
-  end
- end
+	-- try typed scoped enum
+	do
+		local b,e,name,typed,body,varname = strfind(s,"^%s*enum%s+class%s*([^%s:{]*)%s*:%s*([%a_][^{]*)%s*(%b{})%s*([^%s;]*)%s*;?%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			ScopedEnum(name,body,varname,typed)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try function
- do
-  --local b,e,decl,arg,const = strfind(s,"^%s*([~_%w][_@%w%s%*&:<>]*[_%w])%s*(%b())%s*(c?o?n?s?t?)%s*=?%s*0?%s*;%s*")
-  local b,e,decl,arg,const,virt = strfind(s,"^%s*([^%(\n]+)%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?%s*(=?%s*0?)%s*;%s*")
-  if not b then
-  	-- try function with template
-  	b,e,decl,arg,const = strfind(s,"^%s*([~_%w][_@%w%s%*&:<>]*[_%w]%b<>)%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?%s*=?%s*0?%s*;%s*")
-  end
-  if not b then
-   -- try a single letter function name
-   b,e,decl,arg,const = strfind(s,"^%s*([_%w])%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?%s*;%s*")
-  end
-  if not b then
-   -- try function pointer
-   b,e,decl,arg,const = strfind(s,"^%s*([^%(;\n]+%b())%s*(%b())%s*;%s*")
-   if b then
-    decl = string.gsub(decl, "%(%s*%*([^%)]*)%s*%)", " %1 ")
-   end
-  end
-  if b then
-  	if virt and string.find(virt, "[=0]") then
-  		if self.flags then
-  			self.flags.pure_virtual = true
-  		end
-  	end
-   _curr_code = strsub(s,b,e)
-   if const == 'o' then
-     const = ''
-   end
-   Function(decl,arg,const)
-   return strsub(s,e+1)
-  end
- end
+	-- try operator
+	do
+		local b,e,decl,kind,arg,const = strfind(s,"^%s*([_%w][_%w%s%*&:<>,]-%s+operator)%s*([^%s][^%s]*)%s*(%b())%s*(c?o?n?s?t?)%s*;%s*")
+		if not b then
+			-- try inline
+			b,e,decl,kind,arg,const = strfind(s,"^%s*([_%w][_%w%s%*&:<>,]-%s+operator)%s*([^%s][^%s]*)%s*(%b())%s*(c?o?n?s?t?)[%s\n]*%b{}%s*;?%s*")
+		end
+		if not b then
+			-- try cast operator
+			b,e,decl,kind,arg,const = strfind(s, "^%s*(operator)%s+([%w_:%d<>%*%&%s]+)%s*(%b())%s*(c?o?n?s?t?)");
+			if b then
+				local _,ie = string.find(s, "^%s*%b{}", e+1)
+				if ie then
+					e = ie
+				end
+			end
+		end
+		if b then
+			_curr_code = strsub(s,b,e)
+			Operator(decl,kind,arg,const)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try inline function
- do
-  local b,e,decl,arg,const = strfind(s,"^%s*([^%(\n]+)%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?[^;{]*%b{}%s*;?%s*")
-  --local b,e,decl,arg,const = strfind(s,"^%s*([~_%w][_@%w%s%*&:<>]*[_%w>])%s*(%b())%s*(c?o?n?s?t?)[^;]*%b{}%s*;?%s*")
-  if not b then
-   -- try a single letter function name
-   b,e,decl,arg,const = strfind(s,"^%s*([_%w])%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?.-%b{}%s*;?%s*")
-  end
-  if b then
-   _curr_code = strsub(s,b,e)
-   if const == 'o' then
-     const = ''
-   end
-   Function(decl,arg,const)
-   return strsub(s,e+1)
-  end
- end
+	-- try function
+	do
+		--local b,e,decl,arg,const = strfind(s,"^%s*([~_%w][_@%w%s%*&:<>]*[_%w])%s*(%b())%s*(c?o?n?s?t?)%s*=?%s*0?%s*;%s*")
+		local b,e,decl,arg,const,virt = strfind(s,"^%s*([^%(\n]+)%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?%s*(=?%s*0?)%s*;%s*")
+		if not b then
+			-- try function with template
+			b,e,decl,arg,const = strfind(s,"^%s*([~_%w][_@%w%s%*&:<>]*[_%w]%b<>)%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?%s*=?%s*0?%s*;%s*")
+		end
+		if not b then
+			-- try a single letter function name
+			b,e,decl,arg,const = strfind(s,"^%s*([_%w])%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?%s*;%s*")
+		end
+		if not b then
+			-- try function pointer
+			b,e,decl,arg,const = strfind(s,"^%s*([^%(;\n]+%b())%s*(%b())%s*;%s*")
+			if b then
+				decl = string.gsub(decl, "%(%s*%*([^%)]*)%s*%)", " %1 ")
+			end
+		end
+		if b then
+			if virt and string.find(virt, "[=0]") then
+				if self.flags then
+					self.flags.pure_virtual = true
+				end
+			end
+			_curr_code = strsub(s,b,e)
+			if const == 'o' then
+				const = ''
+			end
+			Function(decl,arg,const)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try class
- do
-	 local b,e,name,base,body
+	-- try inline function
+	do
+		local b,e,decl,arg,const = strfind(s,"^%s*([^%(\n]+)%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?[^;{]*%b{}%s*;?%s*")
+		--local b,e,decl,arg,const = strfind(s,"^%s*([~_%w][_@%w%s%*&:<>]*[_%w>])%s*(%b())%s*(c?o?n?s?t?)[^;]*%b{}%s*;?%s*")
+		if not b then
+			-- try a single letter function name
+			b,e,decl,arg,const = strfind(s,"^%s*([_%w])%s*(%b())%s*(c?o?n?s?t?)v?e?r?r?i?d?e?%s*o?v?e?r?r?i?d?e?.-%b{}%s*;?%s*")
+		end
+		if b then
+			_curr_code = strsub(s,b,e)
+			if const == 'o' then
+				const = ''
+			end
+			Function(decl,arg,const)
+			return strsub(s,e+1)
+		end
+	end
+
+	-- try class
+	do
+		local b,e,name,base,body
 		base = '' body = ''
 		b,e,name = strfind(s,"^%s*class%s*([_%w][_%w@]*)%s*;")  -- dummy class
 		local dummy = false
@@ -729,65 +729,65 @@ function classContainer:doparse (s)
 		end
 	end
 
- -- try typedef
- do
-  local b,e,types = strfind(s,"^%s*typedef%s%s*(.-)%s*;%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Typedef(types)
-   return strsub(s,e+1)
-  end
- end
-
- -- try variable
- do
-  local b,e,decl = strfind(s,"^%s*([_%w][_@%s%w%d%*&:<>,]*[_%w%d])%s*;%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-
-	local list = split_c_tokens(decl, ",")
-	Variable(list[1])
-	if list.n > 1 then
-		local _,_,type = strfind(list[1], "(.-)%s+([^%s]*)$");
-
-		local i =2;
-		while list[i] do
-			Variable(type.." "..list[i])
-			i=i+1
+	-- try typedef
+	do
+		local b,e,types = strfind(s,"^%s*typedef%s%s*(.-)%s*;%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Typedef(types)
+			return strsub(s,e+1)
 		end
 	end
-   --Variable(decl)
-   return strsub(s,e+1)
-  end
- end
+
+	-- try variable
+	do
+		local b,e,decl = strfind(s,"^%s*([_%w][_@%s%w%d%*&:<>,]*[_%w%d])%s*;%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+
+			local list = split_c_tokens(decl, ",")
+			Variable(list[1])
+			if list.n > 1 then
+				local _,_,type = strfind(list[1], "(.-)%s+([^%s]*)$");
+
+				local i =2;
+				while list[i] do
+					Variable(type.." "..list[i])
+					i=i+1
+				end
+			end
+			--Variable(decl)
+			return strsub(s,e+1)
+		end
+	end
 
 	-- try string
- do
-  local b,e,decl = strfind(s,"^%s*([_%w]?[_%s%w%d]-char%s+[_@%w%d]*%s*%[%s*%S+%s*%])%s*;%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Variable(decl)
-   return strsub(s,e+1)
-  end
- end
+	do
+		local b,e,decl = strfind(s,"^%s*([_%w]?[_%s%w%d]-char%s+[_@%w%d]*%s*%[%s*%S+%s*%])%s*;%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Variable(decl)
+			return strsub(s,e+1)
+		end
+	end
 
- -- try array
- do
-  local b,e,decl = strfind(s,"^%s*([_%w][][_@%s%w%d%*&:<>]*[]_%w%d])%s*;%s*")
-  if b then
-   _curr_code = strsub(s,b,e)
-   Array(decl)
-   return strsub(s,e+1)
-  end
- end
+	-- try array
+	do
+		local b,e,decl = strfind(s,"^%s*([_%w][][_@%s%w%d%*&:<>]*[]_%w%d])%s*;%s*")
+		if b then
+			_curr_code = strsub(s,b,e)
+			Array(decl)
+			return strsub(s,e+1)
+		end
+	end
 
- -- no matching
- if gsub(s,"%s%s*","") ~= "" then
-  _curr_code = s
-  error("#parse error")
- else
-  return ""
- end
+	-- no matching
+	if gsub(s,"%s%s*","") ~= "" then
+		_curr_code = s
+		error("#parse error")
+	else
+		return ""
+	end
 
 end
 
@@ -795,10 +795,10 @@ function classContainer:parse (s)
 
 	--self.curr_member_access = nil
 
- while s ~= '' do
-  s = self:doparse(s)
-  methodisvirtual = false
- end
+	while s ~= '' do
+		s = self:doparse(s)
+		methodisvirtual = false
+	end
 end
 
 

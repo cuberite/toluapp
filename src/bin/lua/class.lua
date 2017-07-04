@@ -17,12 +17,12 @@
 --    base = class base, if any (only single inheritance is supported)
 --    {i}  = list of members
 classClass = {
- classtype = 'class',
- name = '',
- base = '',
- type = '',
- btype = '',
- ctype = '',
+	classtype = 'class',
+	name = '',
+	base = '',
+	type = '',
+	btype = '',
+	ctype = '',
 }
 classClass.__index = classClass
 setmetatable(classClass,classContainer)
@@ -35,30 +35,30 @@ function classClass:register (pre)
 		return
 	end
 
- pre = pre or ''
- push(self)
+	pre = pre or ''
+	push(self)
 	if _collect[self.type] then
 		output(pre,'#ifdef __cplusplus\n')
-  output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",'.._collect[self.type]..');')
+		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",'.._collect[self.type]..');')
 		output(pre,'#else\n')
-  output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",NULL);')
+		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",NULL);')
 		output(pre,'#endif\n')
 	else
-  output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",NULL);')
+		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",NULL);')
 	end
 	if self.extra_bases then
 		for k,base in ipairs(self.extra_bases) do
 			-- not now
-   --output(pre..' tolua_addbase(tolua_S, "'..self.type..'", "'..base..'");')
+			--output(pre..' tolua_addbase(tolua_S, "'..self.type..'", "'..base..'");')
 		end
 	end
- output(pre..'tolua_beginmodule(tolua_S,"'..self.lname..'");')
- local i=1
- while self[i] do
-  self[i]:register(pre..' ')
-  i = i+1
- end
- output(pre..'tolua_endmodule(tolua_S);')
+	output(pre..'tolua_beginmodule(tolua_S,"'..self.lname..'");')
+	local i=1
+	while self[i] do
+		self[i]:register(pre..' ')
+		i = i+1
+	end
+	output(pre..'tolua_endmodule(tolua_S);')
 	pop()
 end
 
@@ -67,13 +67,13 @@ function classClass:requirecollection (t)
 	if self.flags.protected_destructor or (not self:check_public_access()) then
 		return false
 	end
- push(self)
+	push(self)
 	local r = false
- local i=1
- while self[i] do
-  r = self[i]:requirecollection(t) or r
-  i = i+1
- end
+	local i=1
+	while self[i] do
+		r = self[i]:requirecollection(t) or r
+		i = i+1
+	end
 	pop()
 	-- only class that exports destructor can be appropriately collected
 	-- classes that export constructors need to have a collector (overrided by -D flag on command line)
@@ -82,12 +82,12 @@ function classClass:requirecollection (t)
 		t[self.type] = "tolua_collect_" .. clean_template(self.type)
 		r = true
 	end
- return r
+	return r
 end
 
 -- output tags
 function classClass:decltype ()
- push(self)
+	push(self)
 	self.type = regtype(self.original_name or self.name)
 	self.btype = typevar(self.base)
 	self.ctype = 'const '..self.type
@@ -96,30 +96,30 @@ function classClass:decltype ()
 			self.extra_bases[i] = typevar(self.extra_bases[i])
 		end
 	end
- local i=1
- while self[i] do
-  self[i]:decltype()
-  i = i+1
- end
+	local i=1
+	while self[i] do
+		self[i]:decltype()
+		i = i+1
+	end
 	pop()
 end
 
 
 -- Print method
 function classClass:print (ident,close)
- print(ident.."Class{")
- print(ident.." name = '"..self.name.."',")
- print(ident.." base = '"..self.base.."';")
- print(ident.." lname = '"..self.lname.."',")
- print(ident.." type = '"..self.type.."',")
- print(ident.." btype = '"..self.btype.."',")
- print(ident.." ctype = '"..self.ctype.."',")
- local i=1
- while self[i] do
-  self[i]:print(ident.." ",",")
-  i = i+1
- end
- print(ident.."}"..close)
+	print(ident.."Class{")
+	print(ident.." name = '"..self.name.."',")
+	print(ident.." base = '"..self.base.."';")
+	print(ident.." lname = '"..self.lname.."',")
+	print(ident.." type = '"..self.type.."',")
+	print(ident.." btype = '"..self.btype.."',")
+	print(ident.." ctype = '"..self.ctype.."',")
+	local i=1
+	while self[i] do
+		self[i]:print(ident.." ",",")
+		i = i+1
+	end
+	print(ident.."}"..close)
 end
 
 function classClass:set_protected_destructor(p)
@@ -128,10 +128,10 @@ end
 
 -- Internal constructor
 function _Class (t)
- setmetatable(t,classClass)
- t:buildnames()
- append(t)
- return t
+	setmetatable(t,classClass)
+	t:buildnames()
+	append(t)
+	return t
 end
 
 -- Constructor
@@ -158,18 +158,18 @@ function Class (n,p,b)
 		local types = split_c_tokens(I, ",")
 		-- remove TEMPLATE_BIND line
 		local bs = string.gsub(b, "^{%s*TOLUA_TEMPLATE_BIND[^\n]*\n", "{\n")
-			
+
 		local Tl = split(T, " ")
 		local tc = TemplateClass(n, p, bs, Tl)
 
-		
+
 		tc:throw(types, true)
 		--for i=1,types.n do
 		--	tc:throw(split_c_tokens(types[i], " "), true)
 		--end
 		return
 	end
-	
+
 	local mbase
 
 	if p then
