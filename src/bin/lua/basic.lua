@@ -15,34 +15,34 @@
 -- All occurrences of "char*" will be replaced by "_cstring",
 -- and all occurrences of "void*" will be replaced by "_userdata"
 _basic = {
- ['void'] = '',
- ['char'] = 'number',
- ['int'] = 'number',
- ['short'] = 'number',
- ['long'] = 'number',
- ['unsigned'] = 'number',
- ['float'] = 'number',
- ['double'] = 'number',
- ['size_t'] = 'number',
- ['_cstring'] = 'string',
- ['_userdata'] = 'userdata',
- ['char*'] = 'string',
- ['void*'] = 'userdata',
- ['bool'] = 'boolean',
- ['lua_Object'] = 'value',
- ['LUA_VALUE'] = 'value',    -- for compatibility with tolua 4.0
- ['lua_State*'] = 'state',
- ['_lstate'] = 'state',
- ['lua_Function'] = 'value',
+	['void'] = '',
+	['char'] = 'number',
+	['int'] = 'number',
+	['short'] = 'number',
+	['long'] = 'number',
+	['unsigned'] = 'number',
+	['float'] = 'number',
+	['double'] = 'number',
+	['size_t'] = 'number',
+	['_cstring'] = 'string',
+	['_userdata'] = 'userdata',
+	['char*'] = 'string',
+	['void*'] = 'userdata',
+	['bool'] = 'boolean',
+	['lua_Object'] = 'value',
+	['LUA_VALUE'] = 'value',    -- for compatibility with tolua 4.0
+	['lua_State*'] = 'state',
+	['_lstate'] = 'state',
+	['lua_Function'] = 'value',
 }
 
 _basic_ctype = {
- number = "lua_Number",
- string = "const char*",
- userdata = "void*",
- boolean = "bool",
- value = "int",
- state = "lua_State*",
+	number = "lua_Number",
+	string = "const char*",
+	userdata = "void*",
+	boolean = "bool",
+	value = "int",
+	state = "lua_State*",
 }
 
 -- functions the are used to do a 'raw push' of basic types
@@ -70,18 +70,18 @@ _renaming = {}
 
 _enums = {}
 function appendrenaming (s)
- local b,e,old,new = strfind(s,"%s*(.-)%s*@%s*(.-)%s*$")
+	local b,e,old,new = strfind(s,"%s*(.-)%s*@%s*(.-)%s*$")
 	if not b then
-	 error("#Invalid renaming syntax; it should be of the form: pattern@pattern")
+		error("#Invalid renaming syntax; it should be of the form: pattern@pattern")
 	end
 	tinsert(_renaming,{old=old, new=new})
 end
 
 function applyrenaming (s)
 	for i=1,#_renaming do
-	 local m,n = gsub(s,_renaming[i].old,_renaming[i].new)
+		local m,n = gsub(s,_renaming[i].old,_renaming[i].new)
 		if n ~= 0 then
-		 return m
+			return m
 		end
 	end
 	return nil
@@ -89,36 +89,36 @@ end
 
 -- Error handler
 function tolua_error (s,f)
-if _curr_code then
-	print("***curr code for error is "..tostring(_curr_code))
-	print(debug.traceback())
-end
- local out = _OUTPUT
- _OUTPUT = _STDERR
- if strsub(s,1,1) == '#' then
-  write("\n** tolua: "..strsub(s,2)..".\n\n")
-  if _curr_code then
-   local _,_,s = strfind(_curr_code,"^%s*(.-\n)") -- extract first line
-   if s==nil then s = _curr_code end
-   s = gsub(s,"_userdata","void*") -- return with 'void*'
-   s = gsub(s,"_cstring","char*")  -- return with 'char*'
-   s = gsub(s,"_lstate","lua_State*")  -- return with 'lua_State*'
-   write("Code being processed:\n"..s.."\n")
-  end
- else
- if not f then f = "(f is nil)" end
-  print("\n** tolua internal error: "..f..s..".\n\n")
-  return
- end
- _OUTPUT = out
+	if _curr_code then
+		print("***curr code for error is "..tostring(_curr_code))
+		print(debug.traceback())
+	end
+	local out = _OUTPUT
+	_OUTPUT = _STDERR
+	if strsub(s,1,1) == '#' then
+		write("\n** tolua: "..strsub(s,2)..".\n\n")
+		if _curr_code then
+			local _,_,s = strfind(_curr_code,"^%s*(.-\n)") -- extract first line
+			if s==nil then s = _curr_code end
+			s = gsub(s,"_userdata","void*") -- return with 'void*'
+			s = gsub(s,"_cstring","char*")  -- return with 'char*'
+			s = gsub(s,"_lstate","lua_State*")  -- return with 'lua_State*'
+			write("Code being processed:\n"..s.."\n")
+		end
+	else
+		if not f then f = "(f is nil)" end
+		print("\n** tolua internal error: "..f..s..".\n\n")
+		return
+	end
+	_OUTPUT = out
 end
 
 function warning (msg)
- if flags.q then return end
- local out = _OUTPUT
- _OUTPUT = _STDERR
- write("\n** tolua warning: "..msg..".\n\n")
- _OUTPUT = out
+	if flags.q then return end
+	local out = _OUTPUT
+	_OUTPUT = _STDERR
+	write("\n** tolua warning: "..msg..".\n\n")
+	_OUTPUT = out
 end
 
 -- register an user defined type: returns full type
@@ -149,36 +149,36 @@ function typevar(type)
 end
 
 -- is enum
-function isenumtype (type) 
-  return _enums[type]
+function isenumtype (type)
+	return _enums[type]
 end
 
 -- check if basic type
 function isbasic (type)
- local t = gsub(type,'const ','')
- local m,t = applytypedef('', t)
- local b = _basic[t]
- if b then
-  return b,_basic_ctype[b]
- end
- return nil
+	local t = gsub(type,'const ','')
+	local m,t = applytypedef('', t)
+	local b = _basic[t]
+	if b then
+		return b,_basic_ctype[b]
+	end
+	return nil
 end
 
 -- split string using a token
 function split (s,t)
- local l = {n=0}
- local f = function (s)
-  l.n = l.n + 1
-  l[l.n] = s
-  return ""
- end
- local p = "%s*(.-)%s*"..t.."%s*"
- s = gsub(s,"^%s+","")
- s = gsub(s,"%s+$","")
- s = gsub(s,p,f)
- l.n = l.n + 1
- l[l.n] = gsub(s,"(%s%s*)$","")
- return l
+	local l = {n=0}
+	local f = function (s)
+		l.n = l.n + 1
+		l[l.n] = s
+		return ""
+	end
+	local p = "%s*(.-)%s*"..t.."%s*"
+	s = gsub(s,"^%s+","")
+	s = gsub(s,"%s+$","")
+	s = gsub(s,p,f)
+	l.n = l.n + 1
+	l[l.n] = gsub(s,"(%s%s*)$","")
+	return l
 end
 
 -- splits a string using a pattern, considering the spacial cases of C code (templates, function parameters, etc)
@@ -247,55 +247,55 @@ end
 -- concatenate strings of a table
 function concat (t,f,l,jstr)
 	jstr = jstr or " "
- local s = ''
- local i=f
- while i<=l do
-  s = s..t[i]
-  i = i+1
-  if i <= l then s = s..jstr end
- end
- return s
+	local s = ''
+	local i=f
+	while i<=l do
+		s = s..t[i]
+		i = i+1
+		if i <= l then s = s..jstr end
+	end
+	return s
 end
 
 -- concatenate all parameters, following output rules
 function concatparam (line, ...)
- local i=1
- local arg={...}
- while i<=#arg do
-  if _cont and not strfind(_cont,'[%(,"]') and
-     strfind(arg[i],"^[%a_~]") then
-	    line = line .. ' '
-  end
-  line = line .. arg[i]
-  if arg[i] ~= '' then
-   _cont = strsub(arg[i],-1,-1)
-  end
-  i = i+1
- end
- if strfind(arg[#arg],"[%/%)%;%{%}]$") then
-  _cont=nil line = line .. '\n'
- end
+	local i=1
+	local arg={...}
+	while i<=#arg do
+		if _cont and not strfind(_cont,'[%(,"]') and
+		strfind(arg[i],"^[%a_~]") then
+			line = line .. ' '
+		end
+		line = line .. arg[i]
+		if arg[i] ~= '' then
+			_cont = strsub(arg[i],-1,-1)
+		end
+		i = i+1
+	end
+	if strfind(arg[#arg],"[%/%)%;%{%}]$") then
+		_cont=nil line = line .. '\n'
+	end
 	return line
 end
 
 -- output line
 function output (...)
- local i=1
- local arg={...}
- while i<=#arg do
-  if _cont and not strfind(_cont,'[%(,"]') and
-     strfind(arg[i],"^[%a_~]") then
-	    write(' ')
-  end
-  write(arg[i])
-  if arg[i] ~= '' then
-   _cont = strsub(arg[i],-1,-1)
-  end
-  i = i+1
- end
- if strfind(arg[#arg],"[%/%)%;%{%}]$") then
-  _cont=nil write('\n')
- end
+	local i=1
+	local arg={...}
+	while i<=#arg do
+		if _cont and not strfind(_cont,'[%(,"]') and
+		strfind(arg[i],"^[%a_~]") then
+			write(' ')
+		end
+		write(arg[i])
+		if arg[i] ~= '' then
+			_cont = strsub(arg[i],-1,-1)
+		end
+		i = i+1
+	end
+	if strfind(arg[#arg],"[%/%)%;%{%}]$") then
+		_cont=nil write('\n')
+	end
 end
 
 function get_property_methods(ptype, name)

@@ -19,7 +19,7 @@ local function pp_dofile(path)
 			file:close()
 
 			ret = string.gsub(ret, "%.%.%.%s*%)$", "...) local arg = {n=select('#', ...), ...};")
-			
+
 			loaded = true
 			return ret
 		end

@@ -11,7 +11,7 @@ function extract_code(fn,s)
 		if t == "bind_begin" then
 			_,e,c = strfind(s,"(.-)\n[^\n]*SCRIPT_BIND_END[^\n]*\n",e)
 			if not e then
-			 tolua_error("Unbalanced 'SCRIPT_BIND_BEGIN' directive in header file")
+				tolua_error("Unbalanced 'SCRIPT_BIND_BEGIN' directive in header file")
 			end
 		end
 		if t == "bind_class" or t == "bind_block" then
@@ -20,7 +20,7 @@ function extract_code(fn,s)
 			c = c..'{\n'..extract_code(nil, b)..'\n};\n'
 		end
 		code = code .. c .. "\n"
-	 _,e,c,t = strfind(s, "\n([^\n]-)SCRIPT_([%w_]*)[^\n]*\n",e)
+		_,e,c,t = strfind(s, "\n([^\n]-)SCRIPT_([%w_]*)[^\n]*\n",e)
 	end
 	return code
 end

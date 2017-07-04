@@ -24,32 +24,32 @@ function classEnumerate:register (pre)
 	if not self:check_public_access() then
 		return
 	end
- pre = pre or ''
- local nspace = getnamespace(classContainer.curr)
- local i=1
- while self[i] do
- 	if self.lnames[i] and self.lnames[i] ~= "" then
-	
-		output(pre..'tolua_constant(tolua_S,"'..self.lnames[i]..'",'..nspace..self[i]..');')
+	pre = pre or ''
+	local nspace = getnamespace(classContainer.curr)
+	local i=1
+	while self[i] do
+		if self.lnames[i] and self.lnames[i] ~= "" then
+
+			output(pre..'tolua_constant(tolua_S,"'..self.lnames[i]..'",'..nspace..self[i]..');')
+		end
+		i = i+1
 	end
-  i = i+1
- end
 end
 
 -- Print method
 function classEnumerate:print (ident,close)
- print(ident.."Enumerate{")
- print(ident.." name = "..self.name)
- local i=1
- while self[i] do
-  print(ident.." '"..self[i].."'("..self.lnames[i].."),")
-  i = i+1
- end
- print(ident.."}"..close)
+	print(ident.."Enumerate{")
+	print(ident.." name = "..self.name)
+	local i=1
+	while self[i] do
+		print(ident.." '"..self[i].."'("..self.lnames[i].."),")
+		i = i+1
+	end
+	print(ident.."}"..close)
 end
 
 function emitenumprototype(type)
- output("int tolua_is" .. string.gsub(type,"::","_") .. " (lua_State* L, int lo, int def, tolua_Error* err);")
+	output("int tolua_is" .. string.gsub(type,"::","_") .. " (lua_State* L, int lo, int def, tolua_Error* err);")
 end
 
 _global_output_enums = {}
@@ -73,10 +73,10 @@ end
 
 -- Internal constructor
 function _Enumerate (t,varname)
- setmetatable(t,classEnumerate)
- append(t)
- appendenum(t)
-	 if varname and varname ~= "" then
+	setmetatable(t,classEnumerate)
+	append(t)
+	appendenum(t)
+	if varname and varname ~= "" then
 		if t.name ~= "" then
 			Variable(t.name.." "..varname)
 		else
@@ -85,11 +85,11 @@ function _Enumerate (t,varname)
 			Variable("tolua_readonly int "..varname)
 		end
 	end
-	 local parent = classContainer.curr
-	 if parent then
+	local parent = classContainer.curr
+	if parent then
 		t.access = parent.curr_member_access
 		t.global_access = t:check_public_access()
-	 end
+	end
 	return t
 end
 
@@ -110,8 +110,8 @@ function Enumerate (n,b,varname,typed)
 		tt[2] = tonumber(tt[2])
 		if tt[2] == nil then
 			tt[2] = value
-		end 
-  		value = tt[2] + 1 -- advance the selected value
+		end
+		value = tt[2] + 1 -- advance the selected value
 		if tt[2] > max then
 			max = tt[2]
 		end
