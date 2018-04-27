@@ -160,7 +160,7 @@ function classFunction:supcode (local_constructor)
 			-- check self
 			if class and self.name~='new' and static==nil then
 				output('#ifndef TOLUA_RELEASE\n')
-				output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in function \'%s\'", self.name)..'", NULL);');
+				output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in function \'%s\'", self.name)..'", nullptr);');
 				output('#endif\n')
 			end
 
@@ -425,7 +425,7 @@ function classFunction:supcode (local_constructor)
 					if string.find(par, '=%s*new') or string.find(par, "%(") then -- it's a pointer with an instance as default parameter.. is that valid?
 						return true
 					end
-					return false -- default value is 'NULL' or something
+					return false -- default value is 'nullptr' or something
 				end
 
 

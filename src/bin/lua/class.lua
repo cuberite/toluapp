@@ -41,10 +41,10 @@ function classClass:register (pre)
 		output(pre,'#ifdef __cplusplus\n')
 		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",'.._collect[self.type]..');')
 		output(pre,'#else\n')
-		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",NULL);')
+		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",nullptr);')
 		output(pre,'#endif\n')
 	else
-		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",NULL);')
+		output(pre..'tolua_cclass(tolua_S,"'..self.lname..'","'..self.type..'","'..self.btype..'",nullptr);')
 	end
 	if self.extra_bases then
 		for k,base in ipairs(self.extra_bases) do

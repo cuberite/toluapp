@@ -174,8 +174,8 @@ function classPackage:register (pre)
 	output(pre.."{")
 	output(pre.." tolua_open(tolua_S);")
 	output(pre.." tolua_reg_types(tolua_S);")
-	output(pre.." tolua_module(tolua_S,NULL,",self:hasvar(),");")
-	output(pre.." tolua_beginmodule(tolua_S,NULL);")
+	output(pre.." tolua_module(tolua_S,nullptr,",self:hasvar(),");")
+	output(pre.." tolua_beginmodule(tolua_S,nullptr);")
 	local i=1
 	while self[i] do
 		self[i]:register(pre.."  ")

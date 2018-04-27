@@ -140,7 +140,7 @@ function classVariable:supcode ()
 		-- check self value
 		if class and static==nil then
 			output('#ifndef TOLUA_RELEASE\n')
-			output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in accessing variable \'%s\'", self.name)..'",NULL);');
+			output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in accessing variable \'%s\'", self.name)..'",nullptr);');
 			output('#endif\n')
 		end
 
@@ -195,7 +195,7 @@ function classVariable:supcode ()
 						output('#ifndef TOLUA_RELEASE\n')
 						output('  tolua_Error tolua_err;')
 						if class and static==nil then
-							output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in accessing variable \'%s\'", self.name)..'",NULL);');
+							output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in accessing variable \'%s\'", self.name)..'",nullptr);');
 						elseif static then
 							_,_,self.mod = strfind(self.mod,'^%s*static%s%s*(.*)')
 						end
@@ -280,7 +280,7 @@ function classVariable:supcode ()
 						if self.csetname then
 							output(pre..'tolua_variable(tolua_S,"'..self.lname..'",'..self.cgetname..','..self.csetname..');')
 						else
-							output(pre..'tolua_variable(tolua_S,"'..self.lname..'",'..self.cgetname..',NULL);')
+							output(pre..'tolua_variable(tolua_S,"'..self.lname..'",'..self.cgetname..',nullptr);')
 						end
 					end
 

@@ -96,7 +96,7 @@ function classArray:supcode ()
 	else
 		output(' if (tolua_index<0)')
 	end
-	output('  tolua_error(tolua_S,"array indexing out of range.",NULL);')
+	output('  tolua_error(tolua_S,"array indexing out of range.",nullptr);')
 	output('#endif\n')
 
 	-- return value
@@ -166,7 +166,7 @@ function classArray:supcode ()
 			else
 				output(' if (tolua_index<0)')
 			end
-			output('  tolua_error(tolua_S,"array indexing out of range.",NULL);')
+			output('  tolua_error(tolua_S,"array indexing out of range.",nullptr);')
 			output('#endif\n')
 
 			-- assign value
@@ -213,7 +213,7 @@ function classArray:supcode ()
 			if self.csetname then
 				output(pre..'tolua_array(tolua_S,"'..self.lname..'",'..self.cgetname..','..self.csetname..');')
 			else
-				output(pre..'tolua_array(tolua_S,"'..self.lname..'",'..self.cgetname..',NULL);')
+				output(pre..'tolua_array(tolua_S,"'..self.lname..'",'..self.cgetname..',nullptr);')
 			end
 		end
 
