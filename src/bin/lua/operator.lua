@@ -90,7 +90,7 @@ function classOperator:supcode_tmp()
 
 		-- check self
 		output('#ifndef TOLUA_RELEASE\n')
-		output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in function \'%s\'", self.name)..'",NULL);');
+		output('  if (!self) tolua_error(tolua_S,"'..output_error_hook("invalid \'self\' in function \'%s\'", self.name)..'",nullptr);');
 		output('#endif\n')
 
 		-- cast self
