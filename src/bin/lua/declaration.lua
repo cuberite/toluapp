@@ -289,14 +289,13 @@ function classDeclaration:outchecktype (narg)
 					local full_type = new_mod..' '..new_type
 					line = concatparam(line,'('..full_type..') ')
 				end
-				local def = 0
+				local def = get_type_default_value(t)
 				if self.def ~= '' then
 					def = self.def
 					if (ptr == '' or self.ptr == '&') and not t then
 						def = "(void*)&(const "..type..")"..def
 					end
 				end
-				def = clean_to_function_default(t, def)
 				if t then
 					line = concatparam(line,'tolua_to'..t,'(tolua_S,',narg,',',def,'));')
 				else

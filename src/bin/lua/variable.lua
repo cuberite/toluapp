@@ -206,7 +206,8 @@ function classVariable:supcode ()
 						output('#endif\n')
 
 						-- assign value
-						local def = 0
+						local t = isbasic(self.type)
+						local def = get_type_default_value(t)
 						if self.def ~= '' then def = self.def end
 						if self.type == 'char*' and self.dim ~= '' then -- is string
 							output(' strncpy((char*)')
@@ -230,7 +231,6 @@ function classVariable:supcode ()
 							else
 								output(name)
 							end
-							local t = isbasic(self.type)
 							if prop_set then
 								output('(')
 							else
@@ -242,7 +242,6 @@ function classVariable:supcode ()
 								output('*')
 							end
 							output(') ')
-							def = clean_to_function_default(t, def)
 							if t then
 								if isenum(self.type) then
 									output('(int) ')
