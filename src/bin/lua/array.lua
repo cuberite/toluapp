@@ -190,6 +190,7 @@ function classArray:supcode ()
 			output(') ')
 			local def = 0
 			if self.def ~= '' then def = self.def end
+			def = clean_to_function_default(t, def)
 			if t then
 				output('tolua_to'..t,'(tolua_S,3,',def,'));')
 			else

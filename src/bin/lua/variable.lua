@@ -131,7 +131,7 @@ function classVariable:supcode ()
 		output(' ',self.parent.type,'*','self = ')
 		output('(',self.parent.type,'*) ')
 		local to_func = get_to_function(self.parent.type)
-			output(to_func,'(tolua_S,1,0);')
+			output(to_func,'(tolua_S,1,nullptr);')
 		elseif static then
 			_,_,self.mod = strfind(self.mod,'^%s*static%s%s*(.*)')
 		end
@@ -188,7 +188,7 @@ function classVariable:supcode ()
 						output(' ',self.parent.type,'*','self = ')
 						output('(',self.parent.type,'*) ')
 						local to_func = get_to_function(self.parent.type)
-							output(to_func,'(tolua_S,1,0);')
+							output(to_func,'(tolua_S,1,nullptr);')
 							-- check self value
 						end
 						-- check types
@@ -242,6 +242,7 @@ function classVariable:supcode ()
 								output('*')
 							end
 							output(') ')
+							def = clean_to_function_default(t, def)
 							if t then
 								if isenum(self.type) then
 									output('(int) ')

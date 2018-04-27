@@ -296,6 +296,7 @@ function classDeclaration:outchecktype (narg)
 						def = "(void*)&(const "..type..")"..def
 					end
 				end
+				def = clean_to_function_default(t, def)
 				if t then
 					line = concatparam(line,'tolua_to'..t,'(tolua_S,',narg,',',def,'));')
 				else

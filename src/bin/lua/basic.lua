@@ -426,3 +426,15 @@ function get_is_function(t)
 	end
 	return _is_functions[t] or search_base(t, _base_is_functions) or "tolua_isusertype"
 end
+
+function clean_to_function_default(t, def)
+	-- Replace 0 with nullptr for usertypes and strings
+	if def ~= 0 then
+		return def
+	end
+	
+	if not t or t == 'cppstring' or t == 'string' then
+		return 'nullptr'
+	end
+	return def
+end
