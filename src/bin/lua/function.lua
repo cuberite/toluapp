@@ -141,7 +141,7 @@ function classFunction:supcode (local_constructor)
 			output(' ',self.const,self.parent.type,'*','self = ')
 			output('(',self.const,self.parent.type,'*) ')
 			local to_func = get_to_function(self.parent.type)
-				output(to_func,'(tolua_S,1,0);')
+				output(to_func,'(tolua_S,1,nullptr);')
 			elseif static then
 				_,_,self.mod = strfind(self.mod,'^%s*static%s%s*(.*)')
 			end

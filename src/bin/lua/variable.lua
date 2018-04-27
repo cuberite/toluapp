@@ -131,7 +131,7 @@ function classVariable:supcode ()
 		output(' ',self.parent.type,'*','self = ')
 		output('(',self.parent.type,'*) ')
 		local to_func = get_to_function(self.parent.type)
-			output(to_func,'(tolua_S,1,0);')
+			output(to_func,'(tolua_S,1,nullptr);')
 		elseif static then
 			_,_,self.mod = strfind(self.mod,'^%s*static%s%s*(.*)')
 		end
@@ -188,7 +188,7 @@ function classVariable:supcode ()
 						output(' ',self.parent.type,'*','self = ')
 						output('(',self.parent.type,'*) ')
 						local to_func = get_to_function(self.parent.type)
-							output(to_func,'(tolua_S,1,0);')
+							output(to_func,'(tolua_S,1,nullptr);')
 							-- check self value
 						end
 						-- check types
@@ -206,7 +206,8 @@ function classVariable:supcode ()
 						output('#endif\n')
 
 						-- assign value
-						local def = 0
+						local t = isbasic(self.type)
+						local def = get_type_default_value(t)
 						if self.def ~= '' then def = self.def end
 						if self.type == 'char*' and self.dim ~= '' then -- is string
 							output(' strncpy((char*)')
@@ -230,7 +231,6 @@ function classVariable:supcode ()
 							else
 								output(name)
 							end
-							local t = isbasic(self.type)
 							if prop_set then
 								output('(')
 							else

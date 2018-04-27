@@ -426,3 +426,13 @@ function get_is_function(t)
 	end
 	return _is_functions[t] or search_base(t, _base_is_functions) or "tolua_isusertype"
 end
+
+-- Returns the default value for a value of type t
+-- e.g. number -> 0, string -> nullptr
+function get_type_default_value(t)
+	if (not t) or (t == 'cppstring') or (t == 'string') then
+		return 'nullptr'
+	end
+
+	return 0
+end

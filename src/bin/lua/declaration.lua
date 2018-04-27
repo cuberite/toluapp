@@ -289,7 +289,7 @@ function classDeclaration:outchecktype (narg)
 					local full_type = new_mod..' '..new_type
 					line = concatparam(line,'('..full_type..') ')
 				end
-				local def = 0
+				local def = get_type_default_value(t)
 				if self.def ~= '' then
 					def = self.def
 					if (ptr == '' or self.ptr == '&') and not t then

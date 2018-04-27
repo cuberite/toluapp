@@ -188,7 +188,7 @@ function classArray:supcode ()
 				output('*')
 			end
 			output(') ')
-			local def = 0
+			local def = get_type_default_value(t)
 			if self.def ~= '' then def = self.def end
 			if t then
 				output('tolua_to'..t,'(tolua_S,3,',def,'));')
