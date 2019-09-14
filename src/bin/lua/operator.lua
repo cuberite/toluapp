@@ -177,7 +177,11 @@ function classOperator:supcode_tmp()
 				if flags['W'] then
 					error("tolua: no support for operator" .. f.kind)
 				else
-					warning("No support for operator "..op_k..", ignoring")
+					warning(
+						"No support for operator " .. op_k .. ", ignoring\n" ..
+						"Code that contains the unsupported operator:\n"..
+						d .. k .. a
+					)
 					return nil
 				end
 			end
