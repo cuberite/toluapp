@@ -15,7 +15,7 @@ SET (LIB_SOURCE
 )
 
 add_library(tolualib ${LIB_SOURCE})
-target_link_libraries(tolualib lua)
+target_link_libraries(tolualib lualib)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
 	add_flags_lnk(-L/usr/local/lib)
