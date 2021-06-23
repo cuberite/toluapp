@@ -7,17 +7,12 @@ include_directories ("${PROJECT_SOURCE_DIR}/../")
 include_directories ("${PROJECT_SOURCE_DIR}")
 
 SET (LIB_SOURCE
-	src/lib/tolua_event.c
-	src/lib/tolua_is.c
-	src/lib/tolua_map.c
-	src/lib/tolua_push.c
-	src/lib/tolua_to.c
+	src/lib/tolua_event.cpp
+	src/lib/tolua_is.cpp
+	src/lib/tolua_map.cpp
+	src/lib/tolua_push.cpp
+	src/lib/tolua_to.cpp
 )
 
 add_library(tolualib ${LIB_SOURCE})
 target_link_libraries(tolualib lualib)
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-	add_flags_lnk(-L/usr/local/lib)
-endif()
-
